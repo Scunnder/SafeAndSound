@@ -13,6 +13,7 @@ public class SafeLock : MonoBehaviour
     private int ActiveLock = 0;
     public bool Active = true;
     public AudioSource[] sources;
+    public GameObject[] Locks;
 
     public void Start()
     {
@@ -46,6 +47,7 @@ public class SafeLock : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("Tick");
                     sources[1].Play();
                 }
             }
@@ -67,7 +69,7 @@ public class SafeLock : MonoBehaviour
             if (at == Sweetspot)
             {
                 Debug.Log("Counting " + count);
-                count += 8f * Time.deltaTime;
+                count += 12f * Time.deltaTime;
             }
             else
             {
@@ -92,7 +94,9 @@ public class SafeLock : MonoBehaviour
 
     public void LockDone()
     {
-        Debug.Log("LockDone");
+        Debug.Log("KLANK");
+        Locks[ActiveLock].GetComponent<GUILock>().SetLocked(false);
+        sources[2].Play();
         NewSweetspot();
     }
 
@@ -170,5 +174,6 @@ public class SafeLock : MonoBehaviour
     public void SafeUnlocked()
     {
         Active = false;
+        SafeDial.Active = false;
     }
 }
