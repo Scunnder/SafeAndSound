@@ -28,6 +28,7 @@ public class SafeLock : MonoBehaviour
 
 
     public float count = 0;
+    public bool Once = true;
     public void Update()
     {
         if (Active)
@@ -41,23 +42,32 @@ public class SafeLock : MonoBehaviour
                 if (at == Sweetspot)
                 {
                     Handheld.Vibrate();
-                    sources[0].Play();
+                    Once = true;
                 }
                 else
                 {
-                    sources[1].pitch = Intensity;
                     sources[1].Play();
+                }
+            }
+            else
+            {
+                if(Once)
+                {
+                    Once = false;
+                    if (at == Sweetspot)
+                    {
+                        Debug.Log("SWEETSPOT");
+                        sources[0].Play();
+                    }
                 }
             }
             WasAt = at;
 
-            //vibration
-
-
             //check sweetspot
             if (at == Sweetspot)
             {
-                count += 1f * Time.deltaTime;
+                Debug.Log("Counting " + count);
+                count += 8f * Time.deltaTime;
             }
             else
             {
@@ -67,12 +77,22 @@ public class SafeLock : MonoBehaviour
             if (count > MillisecondsToUnlock)
             {
                 LockDone();
+                CheckWin();
             }
+        }
+    }
+
+    public void CheckWin()
+    {
+        if(ActiveLock > 2)
+        {
+            SafeUnlocked();
         }
     }
 
     public void LockDone()
     {
+        Debug.Log("LockDone");
         NewSweetspot();
     }
 
@@ -88,11 +108,6 @@ public class SafeLock : MonoBehaviour
         if (!first)
         {
             ActiveLock++;
-        }
-
-        if (ActiveLock > 2)
-        {
-            SafeUnlocked();
         }
         Debug.Log("Sweetspot: " + Sweetspot);
     }
@@ -133,7 +148,6 @@ public class SafeLock : MonoBehaviour
         {
             useThis = a;
         }
-        //result
 
         if (useThis <= 3)
         {

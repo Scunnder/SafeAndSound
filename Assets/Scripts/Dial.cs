@@ -62,11 +62,10 @@ public class Dial : MonoBehaviour
 
                 float degrees = -CustomAngle(direction); //Mathf.Atan2(direction.y, direction.x) * 180;// / Mathf.PI;
 
-                degrees = FixDegrees(degrees);
-
                 if (DoOneFinger)
                 {
-                    StartPoint = degrees;
+                    StartDegree = AtDegree;
+                    PressPoint = degrees;
                     DoOneFinger = false;
                 }
                 UpdatePress(degrees);
@@ -130,7 +129,7 @@ public class Dial : MonoBehaviour
         {
             degrees -= 360;
         }
-        while (degrees < -360)
+        while (degrees < 0)
         {
             degrees += 360;
         }
