@@ -12,7 +12,7 @@ public class Dial : MonoBehaviour {
 
 	void Start ()
     {
-	
+	    
 	}
     
     void Update()
@@ -42,25 +42,41 @@ public class Dial : MonoBehaviour {
     }
 
 
+    private bool DoOneFinger = true;
     public void IsTouchedFinger()
     {
-        Vector2 mp = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-        Collider2D c = Physics2D.OverlapPoint(mp);
 
-        if (c != null && c.gameObject.tag == "Dial")
+        Vector2 fingerpoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 1000f));
+        Collider2D collider = Physics2D.OverlapPoint(fingerpoint);
+
+        if (collider != null && collider.gameObject.tag == "Dial")
         {
-            Vector2 dir = mp - (Vector2)transform.position;
 
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-            if (angle < transform.eulerAngles.z)
+            Vector2 heading = fingerpoint - (Vector2)transform.position;
+            float distance = heading.magnitude;
+            if (distance > 0.5)
             {
-                transform.eulerAngles = new Vector3(0, 0, angle);
+                Vector2 direction = heading / distance;
+
+                float degrees = -CustomAngle(direction); //Mathf.Atan2(direction.y, direction.x) * 180;// / Mathf.PI;
+
+                degrees = FixDegrees(degrees);
+
+                if (DoOneFinger)
+                {
+                    //InitialPress(degrees);
+                    DoOneFinger = false;
+                }
+                UpdatePress(degrees);
             }
+        }
+        else
+        {
+            EndPress();
         }
     }
 
-    private bool DoOne = true;
+    private bool DoOneMouse = true;
     public void MouseUpdate()
     {
         Vector2 mousepoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1000f));
@@ -79,10 +95,10 @@ public class Dial : MonoBehaviour {
                 
                 degrees = FixDegrees(degrees);
 
-                if (DoOne)
+                if (DoOneMouse)
                 {
-                    InitialPress(degrees);
-                    DoOne = false;
+                    //InitialPress(degrees);
+                    DoOneMouse = false;
                 }
                 UpdatePress(degrees);
             }
@@ -100,12 +116,13 @@ public class Dial : MonoBehaviour {
 
     public void UpdatePress(float degrees)
     {
-        AtDegree = degrees;
+        AtDegree = degrees + 360;
     }
 
     public void EndPress()
     {
-        DoOne = true;
+        DoOneFinger = true;
+        DoOneMouse = true;
     }
 
     public float FixDegrees(float degrees)
