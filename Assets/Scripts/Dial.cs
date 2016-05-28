@@ -6,7 +6,8 @@ using System.Collections;
 
 public class Dial : MonoBehaviour {
     
-    public int AtDegree = 0;
+    public float StartDegree = 0;
+    public float AtDegree = 0;
     public bool Active = true;
 
 	void Start ()
@@ -16,14 +17,28 @@ public class Dial : MonoBehaviour {
     
     void Update()
     {
-        if(Input.touchCount > 0)
-        {
-            IsTouchedFinger();
+        if(Active)
+        {         
+            if(Input.touchCount > 0)
+            {
+                IsTouchedFinger();
+            }
+            else if(Input.GetMouseButton(0))
+            {
+                MouseUpdate();
+            }
+            else
+            {
+                EndPress();
+            }
         }
-        else if(Input.GetMouseButton(0))
-        {
-            IsTouchedMouse();
-        }
+        UpdateRotation();
+    }
+
+    public void UpdateRotation()
+    {
+
+        transform.eulerAngles = new Vector3(0, 0, AtDegree);
     }
 
 
@@ -44,33 +59,77 @@ public class Dial : MonoBehaviour {
             }
         }
     }
-    
-    public void IsTouchedMouse()
-    {
 
-        Vector2 mousepoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    private bool DoOne = true;
+    public void MouseUpdate()
+    {
+        Vector2 mousepoint = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1000f));
         Collider2D collider = Physics2D.OverlapPoint(mousepoint);
 
         if (collider != null && collider.gameObject.tag == "Dial")
         {
-            //get distance and heading
+            
             Vector2 heading = mousepoint - (Vector2)transform.position;
             float distance = heading.magnitude;
-            if(distance > 0.2)
+            if(distance > 0.5)
             {
-                //normalized
                 Vector2 direction = heading / distance;
 
-                float degrees = Mathf.Atan2(direction.y, direction.x);
-                transform.eulerAngles = new Vector3(0, 0, degrees);
+                float degrees = -CustomAngle(direction); //Mathf.Atan2(direction.y, direction.x) * 180;// / Mathf.PI;
+                
+                degrees = FixDegrees(degrees);
+
+                if (DoOne)
+                {
+                    InitialPress(degrees);
+                    DoOne = false;
+                }
+                UpdatePress(degrees);
             }
+        }
+        else
+        {
+            EndPress();
+        }
+    }
 
+    public void InitialPress(float degrees)
+    {
+        StartDegree = degrees + 180;
+    }
 
+    public void UpdatePress(float degrees)
+    {
+        AtDegree = degrees;
+    }
 
+    public void EndPress()
+    {
+        DoOne = true;
+    }
 
+    public float FixDegrees(float degrees)
+    {
+        if (degrees > 360)
+        {
+            degrees -= 360;
+        }
+        else if (degrees < -360)
+        {
+            degrees += 360;
+        }
+        return degrees;
+    } 
 
-            //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg; //I dont get this
-            //transform.eulerAngles = new Vector3(0, 0, angle);
+    public static float CustomAngle(Vector2 p_vector2)
+    {
+        if (p_vector2.x < 0)
+        {
+            return 360 - (Mathf.Atan2(p_vector2.x, p_vector2.y) * Mathf.Rad2Deg* -1);
+        }
+        else
+        {
+            return Mathf.Atan2(p_vector2.x, p_vector2.y) * Mathf.Rad2Deg;
         }
     }
 
