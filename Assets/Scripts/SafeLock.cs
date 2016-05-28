@@ -11,6 +11,7 @@ public class SafeLock : MonoBehaviour {
     private int TickSize = 360;
     private int ActiveLock = 0;
     public bool Active = true;
+    public AudioSource[] sources;
 
     public void Start ()
     {
@@ -19,16 +20,48 @@ public class SafeLock : MonoBehaviour {
             TickSize = 360;
         }
         NewSweetspot(true);
-        TickSize = 360 / Highest;
+        TickSize = 5;
     }
+
+    public int WasAt = 0;
+
 
     public float count = 0;
     public void Update ()
     {
         if(Active)
         {
-            //at
-            int at = Mathf.RoundToInt(SafeDial.AtDegree) / TickSize;
+          // float Point1 = (SafeDial.AtDegree / (float)Highest) * 360f;
+          // float Point2 = ((float)Sweetspot / (float)Highest) * 360f;
+          //
+          // float distance = Point1 - Point2;
+          // if (distance > 180f)
+          // {
+          //     distance -= 360;
+          // }
+          // else if (distance < -180)
+          // {
+          //     distance += 360;
+          // }
+          // Debug.Log("Distance: " + distance);
+          // distance = Mathf.Abs(distance);
+          
+            int at = Mathf.RoundToInt(SafeDial.AtDegree / TickSize);
+
+            if (WasAt != at)
+            {
+                WasAt = at;
+                if( at == Sweetspot )
+                {
+                    Debug.Log("Sweetspot!");
+                    sources[0].Play();
+                }
+                else
+                {
+                    sources[1].Play();
+                }
+            }
+            WasAt = at;
 
             //vibration
             CheckDistance(at);
@@ -74,7 +107,6 @@ public class SafeLock : MonoBehaviour {
         if (ActiveLock > 2)
         {
             SafeUnlocked();
-            Debug.Log("DONE");
         }
         Debug.Log("Sweetspot: " + Sweetspot);
     }
@@ -84,39 +116,79 @@ public class SafeLock : MonoBehaviour {
     public void CheckDistance(int at)
     {
 
-
-        int result = Mathf.Abs(at - Sweetspot);
-
-        if(result > 50)
+        int a = Sweetspot - at;
+        if( a > 72)
         {
-            result = (100 - at) - Sweetspot;
-            
+            a -= 72;
+        }
+        
+        if (a < 0)
+        {
+            a += 72;
         }
 
-        if(result > 30)
+        int b = at - Sweetspot;
+        if (b > 72)
+        {
+            b -= 72;
+        }
+
+        if (b < 0)
+        {
+            b += 72;
+        }
+
+        int useThis = 0;
+        if(a > b)
+        {
+            useThis = b;
+        }
+        else
+        {
+            useThis = a;
+        }
+        Debug.Log("useThis " + useThis);
+
+
+
+
+
+
+
+
+
+        //fix results
+        int result = Mathf.Abs(at - Sweetspot);
+        
+        if(result > 36 || result < 0)
+        {
+            result = (72 - at) - Sweetspot;
+        }
+        
+        result = Mathf.Abs(result);
+        //result
+
+        if(a > 30)
         {
             Intensity = 5;
         }
-        else if(result <= 30 && result > 18.5) //1
+        if(a <= 20)
         {
             Intensity = 4;
-
         }
-        else if (result <= 18.5 && result > 8.5)//2
+        if (a <= 12)
         {
             Intensity = 3;
-
         }
-        else if (result <= 8.5 && result > 1.5)//3
+        if (a <= 8)
         {
             Intensity = 2;
-
         }
-        else if (result <= 1.5)//5
+        if (a <= 4)
         {
             Intensity = 1;
         }
-        else if (result == 0)//5
+        if (a == 0)
         {
             Intensity = 0;
         }
@@ -125,11 +197,13 @@ public class SafeLock : MonoBehaviour {
     public float VibrateCount = 0;
     public void VibratePhone()
     {
-        if(Intensity * 6 < VibrateCount)
+        if(VibrateCount > Intensity && Intensity != 5)
         {
-            Handheld.Vibrate();
+            //Handheld.Vibrate();
+            VibrateCount = 0f;
         }
-        VibrateCount += 1f * Time.deltaTime;
+        
+        VibrateCount += 4f * Time.deltaTime;
     }
 
     public void SafeUnlocked()
