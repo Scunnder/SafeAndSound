@@ -24,6 +24,7 @@ public class SafeLock : MonoBehaviour
         }
         NewSweetspot(true);
         TickSize = 8;
+        StartNow();
     }
 
     public int WasAt = 0;
@@ -34,6 +35,7 @@ public class SafeLock : MonoBehaviour
     public bool Opened = false;
     public bool NoTouch = false;
     public float DoorCount = 0;
+    public float ExplodeCount = 0;
     public void Update()
     {
         if (Active)
@@ -92,16 +94,29 @@ public class SafeLock : MonoBehaviour
                 ClickVFX.transform.position = Input.GetTouch(0).position;
                 ClickVFX.SetActive(true);
                 Opened = true;
-                SafeOpened();
+
+                UnlockVFX.SetActive(false);
+                OpenVFX.SetActive(true);
+
             }
-            else if(DoorCount > 1)
+            else if(DoorCount > 1f)
             {
                 NoTouch = true;
             }
-            else if(Input.touchCount == 0)
+
+            if(Input.touchCount == 0f)
             {
                 DoorCount += 1f * Time.deltaTime;
             }
+        }
+        else if(ExplodeCount > 2.18f)
+        {
+            Door.SetActive(false);
+            SafeOpened();
+        }
+        else
+        {
+            ExplodeCount += 1f * Time.deltaTime;
         }
     }
 
@@ -203,11 +218,34 @@ public class SafeLock : MonoBehaviour
     public GameObject OpenVFX;
     public GameObject ClickVFX;
     public GameObject Door;
+
     public void SafeOpened()
     {
-        Door.SetActive(false);
-        UnlockVFX.SetActive(false);
-        OpenVFX.SetActive(true);
-        //start next scene here
+        async.allowSceneActivation = true;
+    }
+
+    AsyncOperation async;
+    private void StartNow()
+    {
+        async = Application.LoadLevelAdditiveAsync(1);
+
+        // Set this false to wait changing the scene
+        async.allowSceneActivation = false;
+
+        StartCoroutine(LoadLevelProgress(async));
+    }
+
+
+    IEnumerator LoadLevelProgress(AsyncOperation async)
+    {
+        while (!async.isDone)
+        {
+            Debug.Log("Loading " + async.progress);
+            yield return null;
+        }
+
+        Debug.Log("Loading complete");
+
+        // This is where I'm actually changing the scene
     }
 }
