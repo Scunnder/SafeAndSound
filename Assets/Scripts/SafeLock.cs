@@ -7,7 +7,7 @@ public class SafeLock : MonoBehaviour
 
     public int MillisecondsToUnlock = 100;
     private int Sweetspot = 0;
-    public int Highest = 99;
+    public int Highest = 45;
     public Dial SafeDial;
     private int TickSize = 360;
     private int ActiveLock = 0;
@@ -17,6 +17,7 @@ public class SafeLock : MonoBehaviour
 
     public void Start()
     {
+        Input.gyro.enabled = false;
         if (TickSize == 0)
         {
             TickSize = 360;
@@ -30,6 +31,9 @@ public class SafeLock : MonoBehaviour
 
     public float count = 0;
     public bool Once = true;
+    public bool Opened = false;
+    public bool NoTouch = false;
+    public float DoorCount = 0;
     public void Update()
     {
         if (Active)
@@ -68,7 +72,6 @@ public class SafeLock : MonoBehaviour
             //check sweetspot
             if (at == Sweetspot)
             {
-                Debug.Log("Counting " + count);
                 count += 12f * Time.deltaTime;
             }
             else
@@ -80,6 +83,24 @@ public class SafeLock : MonoBehaviour
             {
                 LockDone();
                 CheckWin();
+            }
+        }
+        else if(!Opened)
+        {
+            if (Input.touchCount > 0 && NoTouch)
+            {
+                ClickVFX.transform.position = Input.GetTouch(0).position;
+                ClickVFX.SetActive(true);
+                Opened = true;
+                SafeOpened();
+            }
+            else if(DoorCount > 1)
+            {
+                NoTouch = true;
+            }
+            else if(Input.touchCount == 0)
+            {
+                DoorCount += 1f * Time.deltaTime;
             }
         }
     }
@@ -171,9 +192,22 @@ public class SafeLock : MonoBehaviour
         }
     }
 
+    public GameObject UnlockVFX;
     public void SafeUnlocked()
     {
         Active = false;
         SafeDial.Active = false;
+        UnlockVFX.SetActive(true);
+    }
+
+    public GameObject OpenVFX;
+    public GameObject ClickVFX;
+    public GameObject Door;
+    public void SafeOpened()
+    {
+        Door.SetActive(false);
+        UnlockVFX.SetActive(false);
+        OpenVFX.SetActive(true);
+        //start next scene here
     }
 }
