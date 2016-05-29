@@ -124,6 +124,7 @@ public class SafeLock : MonoBehaviour
     {
         if(ActiveLock > 2)
         {
+            sources[3].Play();
             SafeUnlocked();
         }
     }
@@ -240,12 +241,8 @@ public class SafeLock : MonoBehaviour
     {
         while (!async.isDone)
         {
-            Debug.Log("Loading " + async.progress);
             yield return null;
         }
-
-        Debug.Log("Loading complete");
-
-        // This is where I'm actually changing the scene
+        
     }
 }
