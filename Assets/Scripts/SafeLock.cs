@@ -14,6 +14,7 @@ public class SafeLock : MonoBehaviour
     public bool Active = true;
     public AudioSource[] sources;
     public GameObject[] Locks;
+    public GameObject SafeParent;
 
     public void Start()
     {
@@ -97,7 +98,17 @@ public class SafeLock : MonoBehaviour
 
                 UnlockVFX.SetActive(false);
                 OpenVFX.SetActive(true);
+                SafeParent.GetComponent<Animator>().SetTrigger("explode");
 
+            }
+            else if(Input.GetMouseButtonDown(0))
+            {
+                ClickVFX.SetActive(true);
+                Opened = true;
+
+                UnlockVFX.SetActive(false);
+                OpenVFX.SetActive(true);
+                SafeParent.GetComponent<Animator>().SetTrigger("explode");
             }
             else if(DoorCount > 1f)
             {
