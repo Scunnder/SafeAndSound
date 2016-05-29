@@ -19,6 +19,7 @@ public class CaseButtons : MonoBehaviour {
                 {
                     Deactivate.SetActive(false);
                     Activate.SetActive(true);
+                    BD.Increment();
                 }
             }
         }
@@ -29,6 +30,7 @@ public class CaseButtons : MonoBehaviour {
         Deactivate.SetActive(false);
         Activate.SetActive(true);
         // BD.Increment();
+        BD.Increment();
         gameObject.SetActive(false);
     }
 }
