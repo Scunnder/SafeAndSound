@@ -68,6 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ButtonsDone.cs" />
+    <Compile Include="Assets\CaseButtons.cs" />
+    <Compile Include="Assets\RevealAudio.cs" />
     <Compile Include="Assets\Scripts\Dial.cs" />
     <Compile Include="Assets\Scripts\GUILock.cs" />
     <Compile Include="Assets\Scripts\ParticleSortingLayer.cs" />

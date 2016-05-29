@@ -95,7 +95,7 @@ public class SafeLock : MonoBehaviour
                 ClickVFX.transform.position = Input.GetTouch(0).position;
                 ClickVFX.SetActive(true);
                 Opened = true;
-
+                sources[4].Play();
                 UnlockVFX.SetActive(false);
                 OpenVFX.SetActive(true);
                 SafeParent.GetComponent<Animator>().SetTrigger("explode");
@@ -105,7 +105,7 @@ public class SafeLock : MonoBehaviour
             {
                 ClickVFX.SetActive(true);
                 Opened = true;
-
+                sources[4].Play();
                 UnlockVFX.SetActive(false);
                 OpenVFX.SetActive(true);
                 SafeParent.GetComponent<Animator>().SetTrigger("explode");
@@ -136,6 +136,7 @@ public class SafeLock : MonoBehaviour
         if(ActiveLock > 2)
         {
             sources[3].Play();
+            sources[2].Play();
             SafeUnlocked();
         }
     }
