@@ -54,7 +54,6 @@ public class SafeLock : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Tick");
                     sources[1].Play();
                 }
             }
@@ -65,7 +64,6 @@ public class SafeLock : MonoBehaviour
                     Once = false;
                     if (at == Sweetspot)
                     {
-                        Debug.Log("SWEETSPOT");
                         sources[0].Play();
                     }
                 }
@@ -143,7 +141,6 @@ public class SafeLock : MonoBehaviour
 
     public void LockDone()
     {
-        Debug.Log("KLANK");
         Locks[ActiveLock].GetComponent<GUILock>().SetLocked(false);
         sources[2].Play();
         NewSweetspot();

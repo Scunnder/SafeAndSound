@@ -6,7 +6,7 @@ public class CaseButtons : MonoBehaviour {
     public GameObject Deactivate;
     public GameObject Activate;
     public Collider2D HitThis;
-    //public ButtonsDone BD;
+    public ButtonsDone BD;
     
     public void Update()
     {
@@ -20,7 +20,6 @@ public class CaseButtons : MonoBehaviour {
                     Deactivate.SetActive(false);
                     Activate.SetActive(true);
                 }
-                Debug.Log("Touched it");
             }
         }
     }
@@ -29,6 +28,7 @@ public class CaseButtons : MonoBehaviour {
     {
         Deactivate.SetActive(false);
         Activate.SetActive(true);
-       // BD.Increment();
+        // BD.Increment();
+        gameObject.SetActive(false);
     }
 }

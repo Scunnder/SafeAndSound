@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Assets\ButtonsDone.cs" />
     <Compile Include="Assets\CaseButtons.cs" />
+    <Compile Include="Assets\GameLoop.cs" />
     <Compile Include="Assets\RevealAudio.cs" />
     <Compile Include="Assets\Scripts\Dial.cs" />
     <Compile Include="Assets\Scripts\GUILock.cs" />
